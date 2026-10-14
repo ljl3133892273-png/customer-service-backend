@@ -1,0 +1,28 @@
+# 环境与凭据
+.env
+.venv
+
+# 课程原有忽略项
+test
+
+# 依赖与构建产物
+node_modules/
+dist/
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+
+# WorkBuddy 会话产物（生成图原图等，仅本地留档）
+.workbuddy/generated-images/
+
+# ===== 2026-10-14 补强：只上传源代码，其余一律排除 =====
+# 全新初始化前备份的旧 .git（留档用，绝不提交）
+.git.backup-*
+# WorkBuddy 会话产物（memory 可能含密钥/口令，绝不提交）
+.workbuddy/
+
+*.log
+logs/
+.vscode/

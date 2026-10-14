@@ -1,0 +1,12 @@
+# 行尾策略（最小化，仅约束批处理文件）
+#
+# 背景：Windows cmd.exe 无法解析 LF 行尾的批处理文件，
+#      goto :label / call :subroutine 会直接报错。
+#      而 git 在本仓库 core.autocrlf=false，默认不做任何行尾转换，
+#      任何编辑器把 .bat 存成 LF 都会导致启动脚本崩溃。
+#
+# 该规则作用：.bat/.cmd 入库(blob)统一 LF，检出到工作区强制 CRLF。
+# 效果：工作区永远是 CRLF（cmd 可正常解析），仓库内部仍是 LF（符合项目约定），
+#      从此无论用什么工具编辑，都不会再出现 LF 行尾的批处理。
+*.bat text eol=crlf
+*.cmd text eol=crlf

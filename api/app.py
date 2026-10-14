@@ -1,0 +1,45 @@
+# itwwy/api/app.py
+
+"""
+定义fastapi实例
+
+"""
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+
+from api.routers.chat_router import router
+from infrastructure.database import init_db_engine, close_db_engine
+from infrastructure.http_client import init_http_client, close_http_client
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    应用生命周期管理：
+        - 启动时：执行 yield 前的代码（初始化数据库引擎）
+        - 运行中：yield 让出控制权，FastAPI 处理请求
+        - 关闭时：执行 yield 后的代码（关闭数据库引擎）
+
+    注意：
+        - app 参数必须指定，类型为 FastAPI
+        - 可通过 app.state 存储全局共享资源（当前未使用）
+    """
+    # 1. 应用启动
+    print("启动服务器...")
+    init_db_engine()  # ← 执行这里，创建数据库连接池
+    init_http_client()
+
+    # 2. 进入 yield
+    yield  # ← FastAPI 开始接收请求
+    #    用户访问 API...
+    #    用户访问 API...
+
+    # 3. 应用关闭（Ctrl+C 或部署平台停止）
+    await close_db_engine()  # ← 执行这里，关闭连接池
+    await close_http_client()
+    print("服务器已关闭")
+
+
+app = FastAPI(description="正狮陶瓷智能客服应用", lifespan=lifespan)
+
+app.include_router(router)
