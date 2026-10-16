@@ -8,7 +8,9 @@ services:
       MYSQL_USER: itwwy
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      # 对外暴露 6110（统一端口规划），容器内仍为 3306
+      # 避免与本机 MySQL80 服务（3306）冲突
+      - "6110:3306"
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci

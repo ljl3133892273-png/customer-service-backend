@@ -25,7 +25,7 @@ async def close_http_client():
 if __name__ == '__main__':
     async def test():
         init_http_client()
-        result = await http_client.get('http://localhost:18081/users/u1001/orders')
+        result = await http_client.get('http://localhost:6014/users/u1001/orders')
         print(result.json())
 
         await close_http_client()
@@ -35,13 +35,13 @@ if __name__ == '__main__':
 
 """
 #同步方式
-# r = httpx.get('http://localhost:18081/users/u1001/orders')
+# r = httpx.get('http://localhost:6014/users/u1001/orders')
 # print(r.json())
 
 #异步方式
 # async def test():
 #     async with httpx.AsyncClient() as client:
-#         r = await client.get('http://localhost:18081/users/u1001/orders')
+#         r = await client.get('http://localhost:6014/users/u1001/orders')
 #         print(r.json()['data']['user_id'])
 # asyncio.run(test())
 """

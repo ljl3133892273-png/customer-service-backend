@@ -48,10 +48,15 @@ class HistoryBuilder:
         :return:
         '''
 
-        if user_message.type is MessageType.TEXT:
-            return HistoryBuilder._render_text_msg(user_message.text)
-        else:
+        # 以实际携带的内容为准，而不是只看 type 字段：
+        # 请求可能声明 type=object 却没给 object，或 type=text 但带了 object，
+        # 只按 type 分支会在 object 为 None 时抛 AttributeError（500）。
+        if user_message.object is not None:
             return HistoryBuilder._render_obj_msg(user_message.object)
+        if user_message.text is not None:
+            return HistoryBuilder._render_text_msg(user_message.text)
+        # 两者皆空属于非法请求，返回占位串而不是崩溃
+        return ''
 
     @classmethod
     def _render_bot_message(cls, bot_msg: BotMessage) -> str:
@@ -76,10 +81,14 @@ class HistoryBuilder:
         "[id="对应的编号", type="订单对象 or 商品对象", title="对应的描述",attributes="price=1000 url="www.pic.com" ]"
         '''
 
+        # 兜底：object 可能为 None（例如消息声明了对象类型却没带对象数据）
+        if object_msg is None:
+            return ''
+
         label = '订单对象' if object_msg.type == 'order' else '商品对象'
         id = object_msg.id
         title = object_msg.title
-        attributes: Dict[str, Any] = object_msg.attributes
+        attributes: Dict[str, Any] = object_msg.attributes or {}
         attributes_str = " ".join([f"{key}={value}" for key, value in attributes.items()])
 
         return f"[label={label}, id={id}, title={title}, attributes={attributes_str}]"

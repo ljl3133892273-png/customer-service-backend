@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 REM ============================================================
 REM  正狮陶瓷智能客服系统 - 一键启动
-REM  启动链路：MySQL容器 -> 建材业务服务(18081) -> 客服后端(18082) -> 前端(5173)
+REM  启动链路：MySQL容器 -> 建材业务服务(6014) -> 客服后端(6004) -> 前端(6015)
 REM  每一步都确认就绪后才继续；全部就绪才打开浏览器，
 REM  避免出现"前端页面打开了但服务还不能用"的情况。
 REM ============================================================
@@ -17,8 +17,8 @@ set "FRONTEND_DIR=%ROOT%external\customer-service-frontend"
 set "MYSQL_CONTAINER=customer-service-mysql"
 rem 从 docker/.env 读取数据库口令（口令不入库，模板见 .env.example）
 if exist "%DOCKER_DIR%\.env" for /f "usebackq tokens=1,* delims==" %%a in ("%DOCKER_DIR%\.env") do set "%%a=%%b"
-set "ECOMM_URL=http://127.0.0.1:18081/health"
-set "FRONTEND_URL=http://127.0.0.1:5173"
+set "ECOMM_URL=http://127.0.0.1:6014/health"
+set "FRONTEND_URL=http://127.0.0.1:6015"
 set "FRONTEND_MARK=src/main.js"
 
 echo ============================================================
@@ -91,18 +91,18 @@ goto wait_mysql
 echo     MySQL 已就绪
 echo.
 
-REM ---------- 第3步：启动建材业务服务（18081） ----------
-echo [3/6] 启动建材业务服务（:18081）...
+REM ---------- 第3步：启动建材业务服务（6014） ----------
+echo [3/6] 启动建材业务服务（:6014）...
 call :probe "%ECOMM_URL%"
 if not errorlevel 1 (
     echo     建材业务服务已在运行，跳过启动
 ) else (
     cd /d "%ECOMM_DIR%"
-    start "建材业务服务 18081" cmd /k uv run python main.py
+    start "建材业务服务 6014" cmd /k uv run python main.py
     cd /d "%ROOT%"
     call :wait_http "%ECOMM_URL%" 60 "建材业务服务"
     if errorlevel 1 (
-        echo [提示] 请查看"建材业务服务 18081"窗口中的错误日志。
+        echo [提示] 请查看"建材业务服务 6014"窗口中的错误日志。
         pause
         exit /b 1
     )
@@ -110,23 +110,23 @@ if not errorlevel 1 (
 echo     建材业务服务已就绪
 echo.
 
-REM ---------- 第4步：启动客服后端（18082） ----------
-echo [4/6] 启动客服后端（:18082）...
-call :probe "http://127.0.0.1:18082/docs"
+REM ---------- 第4步：启动客服后端（6004） ----------
+echo [4/6] 启动客服后端（:6004）...
+call :probe "http://127.0.0.1:6004/docs"
 if not errorlevel 1 (
     echo     客服后端已在运行，跳过启动
 ) else (
     cd /d "%ROOT%"
-    start "客服后端 18082" cmd /k uv run python main.py
-    call :wait_http "http://127.0.0.1:18082/openapi.json" 90 "客服后端"
+    start "客服后端 6004" cmd /k uv run python main.py
+    call :wait_http "http://127.0.0.1:6004/openapi.json" 90 "客服后端"
     if errorlevel 1 (
-        echo [提示] 请查看"客服后端 18082"窗口中的错误日志（常见原因：MySQL 未就绪、.env 配置缺失）。
+        echo [提示] 请查看"客服后端 6004"窗口中的错误日志（常见原因：MySQL 未就绪、.env 配置缺失）。
         pause
         exit /b 1
     )
 )
 REM 深度校验：确认后端能真正连上数据库，否则页面能开但聊天/历史功能不可用
-call :wait_http "http://127.0.0.1:18082/api/chat/history?sender_id=__start_probe__" 30 "客服后端数据库链路"
+call :wait_http "http://127.0.0.1:6004/api/chat/history?sender_id=__start_probe__" 30 "客服后端数据库链路"
 if errorlevel 1 (
     echo [错误] 后端已启动但数据库链路不通，聊天与历史记录功能将不可用。
     echo         请确认 MySQL 容器已就绪、.env 中 DATABASE_URL 配置正确。
@@ -136,18 +136,18 @@ if errorlevel 1 (
 echo     客服后端已就绪（已通过数据库链路校验）
 echo.
 
-REM ---------- 第5步：启动前端页面服务（5173） ----------
-echo [5/6] 启动前端页面服务（:5173）...
+REM ---------- 第5步：启动前端页面服务（6015） ----------
+echo [5/6] 启动前端页面服务（:6015）...
 call :probe_frontend
 if not errorlevel 1 (
     echo     前端服务已在运行，跳过启动
 ) else (
     cd /d "%FRONTEND_DIR%"
-    start "前端页面 5173" cmd /k npm run dev -- --strictPort
+    start "前端页面 6015" cmd /k npm run dev -- --strictPort
     cd /d "%ROOT%"
     call :wait_frontend 90
     if errorlevel 1 (
-        echo [提示] 请查看"前端页面 5173"窗口中的错误日志（常见原因：5173 端口被占用）。
+        echo [提示] 请查看"前端页面 6015"窗口中的错误日志（常见原因：6015 端口被占用）。
         pause
         exit /b 1
     )
@@ -161,9 +161,9 @@ start "" "%FRONTEND_URL%"
 echo.
 echo ============================================================
 echo   启动完成！
-echo   - 前端页面 : http://127.0.0.1:5173
-echo   - 客服后端 : http://127.0.0.1:18082/docs
-echo   - 建材服务 : http://127.0.0.1:18081/docs
+echo   - 前端页面 : http://127.0.0.1:6015
+echo   - 客服后端 : http://127.0.0.1:6004/docs
+echo   - 建材服务 : http://127.0.0.1:6014/docs
 echo.
 echo   三个服务窗口请保持开启，关闭对应窗口即停止该服务。
 echo   本窗口可以关闭。

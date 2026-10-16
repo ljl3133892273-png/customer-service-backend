@@ -5,19 +5,23 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     host: '127.0.0.1',
-    port: 5173,
+    // 统一端口规划：原 5173
+    port: 6015,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:18082',
+        // 客服后端：6004（原 18082）
+        target: 'http://127.0.0.1:6004',
         changeOrigin: true,
       },
       '/commerce': {
-        target: 'http://127.0.0.1:18081',
+        // 建材业务服务：6014（原 18081）
+        target: 'http://127.0.0.1:6014',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/commerce/, ''),
       },
       '/health': {
-        target: 'http://127.0.0.1:18082',
+        // 客服后端：6004（原 18082）
+        target: 'http://127.0.0.1:6004',
         changeOrigin: true,
       },
     },

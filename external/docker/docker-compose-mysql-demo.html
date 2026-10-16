@@ -244,7 +244,7 @@ button.primary:hover{filter:brightness(1.15)}
         <div class="app-ic">🖥️</div>
         <div class="app-t">业务 App</div>
         <div class="app-s">MySQL 客户端</div>
-        <div class="app-conn">localhost:3306</div>
+        <div class="app-conn">localhost:6110</div>
       </div>
       <!-- 宿主机 -->
       <div class="hostbox">
@@ -293,8 +293,8 @@ button.primary:hover{filter:brightness(1.15)}
         </div>
       </div>
       <!-- 端口标签 -->
-      <div class="port-tag">3306</div>
-      <div class="map-tag">3306:3306</div>
+      <div class="port-tag">6110</div>
+      <div class="map-tag">6110:3306</div>
     </div>
   </section>
 
@@ -326,7 +326,7 @@ button.primary:hover{filter:brightness(1.15)}
 
 <!-- ========== 底部要点卡片 ========== -->
 <div class="cards">
-  <div class="mini"><div class="mi">🔌</div><div class="mt">端口映射</div><div class="ms">ports: "3306:3306"</div><div class="md">宿主机 3306 ↔ 容器 3306，App 用 localhost:3306 直连，无需进入容器</div></div>
+  <div class="mini"><div class="mi">🔌</div><div class="mt">端口映射</div><div class="ms">ports: "6110:3306"</div><div class="md">宿主机 6110 ↔ 容器 3306，App 用 localhost:6110 直连，无需进入容器</div></div>
   <div class="mini"><div class="mi">🔑</div><div class="mt">账号自动注入</div><div class="ms">environment</div><div class="md">首次启动自动初始化 root 密码与 itwwy 账号，随容器一起创建</div></div>
   <div class="mini"><div class="mi">📦</div><div class="mt">数据持久化</div><div class="ms">mysql_data:/var/lib/mysql</div><div class="md">命名卷独立于容器生命周期，删容器、重建容器数据都不丢</div></div>
   <div class="mini"><div class="mi">🔄</div><div class="mt">自动重启</div><div class="ms">restart: unless-stopped</div><div class="md">mysqld 崩溃自动拉起；仅当手动 docker stop 时才不会重启</div></div>
@@ -362,10 +362,10 @@ var STEPS=[
          '<span class="t-i">[init] done · starting mysqld ...</span>']},
   {hl:[10,11,12,13],
    title:'④ MySQL 就绪 · 端口对外',
-   desc:'mysqld 启动完成，ports 把宿主机 3306 映射到容器 3306 —— 外部程序直接连 localhost:3306 即可，不必进入容器；utf8mb4 参数保证中文不乱码。',
+   desc:'mysqld 启动完成，ports 把宿主机 6110 映射到容器 3306 —— 外部程序直接连 localhost:6110 即可，不必进入容器；utf8mb4 参数保证中文不乱码。',
    logs:['<span class="t-ok">mysqld: ready for connections ✔</span>',
          '<span class="t-d">Version: 8.4.0 · Port: 3306 (TCP)</span>',
-         '<span class="t-d">mapping: 0.0.0.0:3306 → 3306/tcp ✔</span>',
+         '<span class="t-d">mapping: 0.0.0.0:6110 → 3306/tcp ✔</span>',
          '<span class="t-ok">character_set_server = utf8mb4 · 中文正常 ✔</span>']},
   {hl:[15,19],
    title:'⑤ 写入数据 · 落盘持久化',
@@ -397,7 +397,7 @@ var YAML=[
  '      MYSQL_USER: itwwy',
  '      MYSQL_PASSWORD: itwwy123@',
  '    ports:',
- '      - "3306:3306"',
+ '      - "6110:3306"',
  '    command:',
  '      - --character-set-server=utf8mb4',
  '      - --collation-server=utf8mb4_unicode_ci',

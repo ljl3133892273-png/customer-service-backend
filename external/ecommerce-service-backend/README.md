@@ -42,10 +42,10 @@
 ```powershell
 cd ecommerce-service-backend
 uv sync
-uv run uvicorn app.main:app --reload --port 18081
+uv run uvicorn app.main:app --reload --port 6014
 ```
 
 启动后默认地址：
 
-- API: `http://127.0.0.1:18081`
-- API 文档: `http://127.0.0.1:18081/docs`
+- API: `http://127.0.0.1:6014`
+- API 文档: `http://127.0.0.1:6014/docs`
